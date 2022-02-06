@@ -1,0 +1,6 @@
+[submodule "libs/lvgl"]
+	path = libs/lvgl
+	url = https://github.com/vesim987/lvgl
+[submodule "libs/lv_drivers"]
+	path = libs/lv_drivers
+	url = https://github.com/vesim987/lv_drivers
