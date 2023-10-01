@@ -4,7 +4,7 @@ const c = lv.c;
 pub const Switch = @This();
 obj: *c.lv_obj_t,
 
-usingnamespace lv.Obj.Functions(Switch);
+pub usingnamespace lv.Obj.Functions(Switch);
 
 pub fn init(parent: anytype) Switch {
     return .{

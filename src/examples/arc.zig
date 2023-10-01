@@ -1,5 +1,5 @@
 const std = @import("std");
-const lv = @import("../../src/lv.zig");
+const lv = @import("zlvgl");
 
 pub fn example_1() void {
     const arc = lv.Arc.init(lv.Screen.active());
@@ -20,10 +20,10 @@ pub fn example_2() void {
 
     var anim: lv.Anim = undefined;
     anim.init();
-    anim.setVar(@ptrCast(*anyopaque, arc.obj));
+    anim.setVar(@as(*anyopaque, @ptrCast(arc.obj)));
     anim.setExecCb((struct {
         fn f(obj: lv.Obj, value: i32) void {
-            (lv.Arc{ .obj = obj.obj }).setValue(@intCast(i16, value));
+            (lv.Arc{ .obj = obj.obj }).setValue(@as(i16, @intCast(value)));
         }
     }).f);
     anim.setTime(1000);

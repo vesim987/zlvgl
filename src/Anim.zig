@@ -15,7 +15,7 @@ pub fn setVar(self: *Anim, var_: *anyopaque) void {
 pub fn setExecCb(self: *Anim, comptime exec_cb: anytype) void {
     c.lv_anim_set_exec_cb(&self.internal, (struct {
         fn f(obj: ?*anyopaque, v: i32) callconv(.C) void {
-            exec_cb(lv.Obj{ .obj = @ptrCast(*c.lv_obj_t, obj.?) }, v);
+            exec_cb(lv.Obj{ .obj = @as(*c.lv_obj_t, @ptrCast(obj.?)) }, v);
         }
     }).f);
 }

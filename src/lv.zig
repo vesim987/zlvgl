@@ -1,5 +1,6 @@
 const std = @import("std");
 pub const c = @import("c.zig").c;
+pub const config = @import("config");
 
 pub const Layout = @import("layout.zig").Layout;
 pub const AnimEnable = @import("anim_enable.zig").AnimEnable;
@@ -80,7 +81,7 @@ pub fn isInitialized() bool {
 }
 
 pub fn deinit() void {
-    c.lv_deinit();
+    // c.lv_deinit();
 }
 
 pub fn pct(value: i16) i16 {
@@ -97,19 +98,18 @@ pub const Size = struct {
     pub const Content = c.LV_SIZE_CONTENT;
 };
 
-//comptime {
-//    inline for (std.meta.declarations(@This())) |decl| {
-//        switch (decl.data) {
-//            .Fn => {},
-//            else => {
-//                if (std.mem.eql(u8, decl.name, "c"))
-//                    continue;
-//                if (std.mem.eql(u8, decl.name, "Coord"))
-//                    continue;
-//                inline for (std.meta.declarations(@field(@This(), decl.name))) |d| {
-//                    _ = d;
-//                }
-//            },
-//        }
-//    }
-//}
+comptime {
+    std.testing.refAllDeclsRecursive(@This());
+
+    // inline for (std.meta.declarations(@This())) |decl| {
+    //     if (std.mem.eql(u8, decl.name, "c"))
+    //         continue;
+    //     if (std.mem.eql(u8, decl.name, "Coord"))
+    //         continue;
+    //     if(@TypeOf(@field(@This(), )))
+
+    //     inline for (std.meta.declarations(@field(@This(), decl.name))) |d| {
+    //         _ = d;
+    //     }
+    // }
+}

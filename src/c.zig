@@ -1,8 +1,32 @@
+const config = @import("lv.zig").config;
+
 pub const c = @cImport({
-    @cDefine("USE_GTK", "1");
+    switch (config.driver) {
+        .Sdl => {
+            switch (config.gpu) {
+                .Software => {
+                    @cDefine("USE_SDL", "1");
+                },
+                .Sdl => {
+                    @cDefine("USE_SDL_GPU", "1");
+                },
+                else => unreachable,
+            }
+        },
+        .Gtk => {
+            @cDefine("USE_GTK", "1");
+        },
+        .FbDev => {
+            @cDefine("USE_FBDEV", "1");
+        },
+    }
+    @cDefine("LV_LVGL_H_INCLUDE_SIMPLE", "1");
+    @cDefine("SDL_INCLUDE_PATH", "<SDL2/SDL.h>");
     @cDefine("ZIG", "1");
-    @cInclude("lvgl/lvgl.h");
-    @cInclude("lv_drivers/gtkdrv/gtkdrv.h");
-    @cInclude("lv_drivers/display/fbdev.h");
-    @cInclude("lv_drivers/indev/evdev.h");
+    @cInclude("lvgl.h");
+    @cInclude("gtkdrv/gtkdrv.h");
+    @cInclude("display/fbdev.h");
+    @cInclude("indev/evdev.h");
+    @cInclude("sdl/sdl.h");
+    @cInclude("sdl/sdl_gpu.h");
 });

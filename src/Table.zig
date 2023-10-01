@@ -4,7 +4,7 @@ const c = lv.c;
 pub const Table = @This();
 obj: *c.lv_obj_t,
 
-usingnamespace lv.Obj.Functions(Table);
+pub usingnamespace lv.Obj.Functions(Table);
 
 pub const CellCtrl = enum(u8) {
     MergeRight = c.LV_TABLE_CELL_CTRL_MERGE_RIGHT,
@@ -38,7 +38,7 @@ pub fn setColWidth(self: Table, col_id: u16, w: lv.Coord) void {
 }
 
 pub fn addCellCtrl(self: Table, row: u16, col: u16, ctrl: CellCtrl) void {
-    c.lv_table_add_cell_ctrl(self.obj, row, col, @enumToInt(ctrl));
+    c.lv_table_add_cell_ctrl(self.obj, row, col, @intFromEnum(ctrl));
 }
 
 pub fn getCellValue(self: Table, row: u16, col: u16) [*c]const u8 {
@@ -58,7 +58,7 @@ pub fn getColWidth(self: Table, col: u16) lv.Coord {
 }
 
 pub fn hasCellCtrl(self: Table, row: u16, col: u16, ctrl: CellCtrl) bool {
-    return c.lv_table_has_cell_ctrl(self.obj, row, col, @enumToInt(ctrl));
+    return c.lv_table_has_cell_ctrl(self.obj, row, col, @intFromEnum(ctrl));
 }
 
 pub fn getSelectedCell(self: Table, row: *u16, col: *u16) void {

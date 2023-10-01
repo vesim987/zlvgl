@@ -1,5 +1,5 @@
 const std = @import("std");
-const lv = @import("../../src/lv.zig");
+const lv = @import("zlvgl");
 
 pub fn example_1() void {
     const btn1 = lv.Button.init(lv.Screen.active());

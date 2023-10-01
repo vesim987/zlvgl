@@ -4,7 +4,7 @@ const c = lv.c;
 pub const List = @This();
 obj: *c.lv_obj_t,
 
-usingnamespace lv.Obj.Functions(List);
+pub usingnamespace lv.Obj.Functions(List);
 
 pub fn init(parent: anytype) List {
     return .{

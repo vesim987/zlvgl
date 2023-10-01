@@ -4,7 +4,7 @@ const c = lv.c;
 pub const Label = @This();
 obj: *c.lv_obj_t,
 
-usingnamespace lv.Obj.Functions(Label);
+pub usingnamespace lv.Obj.Functions(Label);
 
 pub const LongMode = enum(u8) {
     Wrap = c.LV_LABEL_LONG_WRAP,
@@ -28,7 +28,7 @@ pub fn setTextStatic(self: Label, text: [*:0]const u8) void {
 }
 
 pub fn setLongMode(self: Label, mode: LongMode) void {
-    c.lv_label_set_long_mode(self.obj, @enumToInt(mode));
+    c.lv_label_set_long_mode(self.obj, @intFromEnum(mode));
 }
 
 pub fn setRecolor(self: Label, en: bool) void {
@@ -48,7 +48,7 @@ pub fn getText(self: Label) [*c]const u8 {
 }
 
 pub fn getLongMode(self: Label) LongMode {
-    return @intToEnum(LongMode, c.lv_label_get_long_mode(self.obj));
+    return @as(LongMode, @enumFromInt(c.lv_label_get_long_mode(self.obj)));
 }
 
 pub fn getRecolor(self: Label) bool {

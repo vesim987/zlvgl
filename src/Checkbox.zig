@@ -4,7 +4,7 @@ const c = lv.c;
 pub const Checkbox = @This();
 obj: *c.lv_obj_t,
 
-usingnamespace lv.Obj.Functions(Checkbox);
+pub usingnamespace lv.Obj.Functions(Checkbox);
 
 pub fn init(parent: anytype) Checkbox {
     return Checkbox{ .obj = c.lv_checkbox_create(parent.obj).? };

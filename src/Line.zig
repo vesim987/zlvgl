@@ -4,14 +4,14 @@ const c = lv.c;
 pub const Line = @This();
 obj: *c.lv_obj_t,
 
-usingnamespace lv.Obj.Functions(Line);
+pub usingnamespace lv.Obj.Functions(Line);
 
 pub fn init(parent: anytype) Line {
     return .{ .obj = c.lv_line_create(parent.obj).? };
 }
 
 pub fn setPoints(self: Line, points: []lv.Point) void {
-    c.lv_line_set_points(self.obj, points.ptr, @intCast(u16, points.len));
+    c.lv_line_set_points(self.obj, points.ptr, @as(u16, @intCast(points.len)));
 }
 
 pub fn setYInvert(self: Line, en: bool) void {

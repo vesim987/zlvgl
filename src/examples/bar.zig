@@ -1,5 +1,5 @@
 const std = @import("std");
-const lv = @import("../../src/lv.zig");
+const lv = @import("zlvgl");
 
 pub fn example_1() void {
     const bar = lv.Bar.init(lv.Screen.active());
@@ -26,7 +26,7 @@ pub fn example_3() void {
     }.f);
     anim.setTime(3000);
     anim.setPlaybackTime(3000);
-    anim.setVar(@ptrCast(*anyopaque, bar.obj));
+    anim.setVar(@as(*anyopaque, @ptrCast(bar.obj)));
     anim.setValues(-20, 40);
     anim.setRepeatCount(0xffff);
     _ = anim.start();

@@ -4,7 +4,7 @@ const c = lv.c;
 pub const Bar = @This();
 obj: *c.lv_obj_t,
 
-usingnamespace lv.Obj.Functions(Bar);
+pub usingnamespace lv.Obj.Functions(Bar);
 
 pub const Mode = enum(u8) {
     Normal = c.LV_BAR_MODE_NORMAL,
@@ -18,11 +18,11 @@ pub fn init(parent: anytype) Bar {
 }
 
 pub fn setValue(self: Bar, value: i32, anim: lv.AnimEnable) void {
-    c.lv_bar_set_value(self.obj, value, @enumToInt(anim));
+    c.lv_bar_set_value(self.obj, value, @intFromEnum(anim));
 }
 
 pub fn setStartValue(self: Bar, value: i32, anim: lv.AnimEnable) void {
-    c.lv_bar_set_start_value(self.obj, value, @enumToInt(anim));
+    c.lv_bar_set_start_value(self.obj, value, @intFromEnum(anim));
 }
 
 pub fn setRange(self: Bar, min: i32, max: i32) void {
@@ -30,7 +30,7 @@ pub fn setRange(self: Bar, min: i32, max: i32) void {
 }
 
 pub fn setMode(self: Bar, mode: Mode) void {
-    c.lv_bar_set_mode(self.obj, @enumToInt(mode));
+    c.lv_bar_set_mode(self.obj, @intFromEnum(mode));
 }
 
 pub fn getValue(self: Bar) i32 {
@@ -50,5 +50,5 @@ pub fn getMaxValue(self: Bar) i32 {
 }
 
 pub fn getMode(self: Bar) Mode {
-    return @intToEnum(Mode, c.lv_bar_get_mode(self.obj));
+    return @enumFromInt(c.lv_bar_get_mode(self.obj));
 }

@@ -4,7 +4,7 @@ const c = lv.c;
 pub const Slider = @This();
 obj: *c.lv_obj_t,
 
-usingnamespace lv.Obj.Functions(Slider);
+pub usingnamespace lv.Obj.Functions(Slider);
 
 pub fn init(parent: anytype) Slider {
     return .{
@@ -13,11 +13,11 @@ pub fn init(parent: anytype) Slider {
 }
 
 pub fn setValue(self: Slider, value: i16, anim: lv.AnimEnable) void {
-    c.lv_slider_set_value(self.obj, value, @enumToInt(anim));
+    c.lv_slider_set_value(self.obj, value, @intFromEnum(anim));
 }
 
 pub fn setLeftValue(self: Slider, left_value: i16, anim: lv.AnimEnable) void {
-    c.lv_slider_set_left_value(self.obj, left_value, @enumToInt(anim));
+    c.lv_slider_set_left_value(self.obj, left_value, @intFromEnum(anim));
 }
 
 pub fn setRange(self: Slider, min: i16, max: i16) void {

@@ -31,11 +31,11 @@ pub fn init() void {
 }
 
 pub fn setFlow(self: Flex, flow: Flow) void {
-    c.lv_obj_set_flex_flow(self.obj, @enumToInt(flow));
+    c.lv_obj_set_flex_flow(self.obj, @intFromEnum(flow));
 }
 
 pub fn setAlign(self: Flex, main_place: Align, cross_place: Align, track_place: Align) void {
-    c.lv_obj_set_flex_align(self.obj, @enumToInt(main_place), @enumToInt(cross_place), @enumToInt(track_place));
+    c.lv_obj_set_flex_align(self.obj, @intFromEnum(main_place), @intFromEnum(cross_place), @intFromEnum(track_place));
 }
 
 pub fn setGrow(self: Flex, grow: u8) void {

@@ -43,7 +43,7 @@ pub fn getChildCnt(self: Obj) u32 {
 }
 
 pub fn getChild(self: Obj, idx: u32) ?Obj {
-    return if (c.lv_obj_get_child(self.obj, @intCast(i32, idx))) |obj| .{ .obj = obj } else null;
+    return if (c.lv_obj_get_child(self.obj, @as(i32, @intCast(idx)))) |obj| .{ .obj = obj } else null;
 }
 
 pub fn setSize(self: Obj, width: i16, height: i16) void {
@@ -74,11 +74,11 @@ pub fn getParent(self: Obj, comptime type_: type) ?type_ {
 }
 
 pub fn setAlign(self: Obj, align_: lv.Align, x_ofs: lv.Coord, y_ofs: lv.Coord) void {
-    c.lv_obj_align(self.obj, @enumToInt(align_), x_ofs, y_ofs);
+    c.lv_obj_align(self.obj, @intFromEnum(align_), x_ofs, y_ofs);
 }
 
 pub fn setAlignTo(self: Obj, base: anytype, align_: lv.Align, x_ofs: lv.Coord, y_ofs: lv.Coord) void {
-    c.lv_obj_align_to(self.obj, base.obj, @enumToInt(align_), x_ofs, y_ofs);
+    c.lv_obj_align_to(self.obj, base.obj, @intFromEnum(align_), x_ofs, y_ofs);
 }
 
 pub const Flag = enum(u32) {
@@ -117,11 +117,11 @@ pub const Flag = enum(u32) {
 
 // flags
 pub fn addFlag(self: Obj, flag: Flag) void {
-    c.lv_obj_add_flag(self.obj, @enumToInt(flag));
+    c.lv_obj_add_flag(self.obj, @intFromEnum(flag));
 }
 
 pub fn clearFlag(self: Obj, flag: Flag) void {
-    c.lv_obj_clear_flag(self.obj, @enumToInt(flag));
+    c.lv_obj_clear_flag(self.obj, @intFromEnum(flag));
 }
 
 // styles
@@ -142,7 +142,7 @@ pub const StyleSelector = enum(u32) {
 };
 pub fn removeStyle(self: Obj, style: ?*anyopaque, selector: StyleSelector) void {
     _ = style;
-    c.lv_obj_remove_style(self.obj, null, @enumToInt(selector));
+    c.lv_obj_remove_style(self.obj, null, @intFromEnum(selector));
 }
 
 pub const BaseDir = enum(u8) {
@@ -156,7 +156,7 @@ pub const BaseDir = enum(u8) {
 };
 
 pub fn setStyleBaseDir(self: Obj, value: BaseDir, selector: StyleSelector) void {
-    c.lv_obj_set_style_base_dir(self.obj, @enumToInt(value), @enumToInt(selector));
+    c.lv_obj_set_style_base_dir(self.obj, @intFromEnum(value), @intFromEnum(selector));
 }
 
 // state
@@ -218,7 +218,6 @@ pub fn Functions(comptime Self: type) type {
         fn generateWrapper(comptime callbacks: type, comptime name: []const u8) fn (?*c.lv_event_t) callconv(.C) void {
             return struct {
                 fn f(e: ?*c.lv_event_t) callconv(.C) void {
-                    _ = e;
                     @field(callbacks, name)(Self{ .obj = e.?.target.? });
                 }
             }.f;

@@ -4,7 +4,7 @@ const c = lv.c;
 pub const Arc = @This();
 obj: *c.lv_obj_t,
 
-usingnamespace lv.Obj.Functions(Arc);
+pub usingnamespace lv.Obj.Functions(Arc);
 
 pub const Mode = enum(u8) {
     Normal = c.LV_ARC_MODE_NORMAL,
@@ -52,7 +52,7 @@ pub fn setRotation(self: Arc, rotation: u16) void {
 }
 
 pub fn setMode(self: Arc, mode: Mode) void {
-    c.lv_arc_set_mode(self.obj, @enumToInt(mode));
+    c.lv_arc_set_mode(self.obj, @intFromEnum(mode));
 }
 
 pub fn setValue(self: Arc, value: i16) void {
@@ -96,5 +96,5 @@ pub fn getMaxValue(self: Arc) i16 {
 }
 
 pub fn getMode(self: Arc) Mode {
-    return @intToEnum(Mode, c.lv_arc_get_mode(self.obj));
+    return @enumFromInt(c.lv_arc_get_mode(self.obj));
 }

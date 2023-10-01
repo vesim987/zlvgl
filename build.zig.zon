@@ -1,0 +1,17 @@
+.{
+    .name = "zlvgl",
+    .version = "0.0.1",
+    .dependencies = .{
+        .lv_drivers = .{
+            // .path = "../lv_drivers"
+            .url = "https://github.com/vesim987/lv_drivers/archive/9eb45c2b521d3a128e4af94a4d394bb79d56cae0.tar.gz",
+            .hash = "1220f531818a8e82e5b372137a30db880b755a5554977c1273ca33da7c6dc8d8a551",
+        },
+        .lvgl = .{
+            // .path = "../lvgl",
+            .url = "https://github.com/vesim987/lvgl/archive/4585fd321d3616f21d6ea67742b6100da234a663.tar.gz",
+            .hash = "1220b9bd50e5051f51662e4b18e25f646d498d221a0e02135f99c5293a125bed1664",
+        },
+    },
+}
+

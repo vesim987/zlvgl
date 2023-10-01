@@ -4,7 +4,7 @@ const c = lv.c;
 pub const Dropdown = @This();
 obj: *c.lv_obj_t,
 
-usingnamespace lv.Obj.Functions(Dropdown);
+pub usingnamespace lv.Obj.Functions(Dropdown);
 
 pub fn init(parent: anytype) Dropdown {
     return Dropdown{ .obj = c.lv_dropdown_create(parent.obj).? };
@@ -35,11 +35,11 @@ pub fn setSelected(self: Dropdown, sel_opt: u16) void {
 }
 
 pub fn setDir(self: Dropdown, dir: lv.Dir) void {
-    c.lv_dropdown_set_dir(self.obj, @enumToInt(dir));
+    c.lv_dropdown_set_dir(self.obj, @intFromEnum(dir));
 }
 
 pub fn setSymbol(self: Dropdown, symbol: [:0]const u8) void {
-    c.lv_dropdown_set_symbol(self.obj, @ptrCast(*const anyopaque, symbol));
+    c.lv_dropdown_set_symbol(self.obj, @ptrCast(symbol.ptr));
 }
 
 pub fn setSelectedHighlight(self: Dropdown, en: bool) void {
@@ -67,7 +67,7 @@ pub fn getOptionCnt(self: Dropdown) u16 {
 }
 
 pub fn getSelectedStr(self: Dropdown, buf: [:0]u8) void {
-    c.lv_dropdown_get_selected_str(self.obj, buf.ptr, @intCast(u32, buf.len));
+    c.lv_dropdown_get_selected_str(self.obj, buf.ptr, @intCast(buf.len));
 }
 
 pub fn getSymbol(self: Dropdown) [*c]const u8 {
@@ -79,7 +79,7 @@ pub fn getSelectedHighlight(self: Dropdown) bool {
 }
 
 pub fn getDir(self: Dropdown) lv.Dir {
-    return @intToEnum(lv.Dir, c.lv_dropdown_get_dir(self.obj));
+    return @enumFromInt(c.lv_dropdown_get_dir(self.obj));
 }
 
 pub fn open(self: Dropdown) void {
