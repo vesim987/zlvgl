@@ -46,7 +46,7 @@ pub fn getChild(self: Obj, idx: u32) ?Obj {
     return if (c.lv_obj_get_child(self.obj, @as(i32, @intCast(idx)))) |obj| .{ .obj = obj } else null;
 }
 
-pub fn setSize(self: Obj, width: i16, height: i16) void {
+pub fn setSize(self: Obj, width: i32, height: i32) void {
     c.lv_obj_set_size(self.obj, width, height);
 }
 
@@ -186,7 +186,7 @@ pub fn Functions(comptime Self: type) type {
             return Obj{ .obj = self.obj };
         }
 
-        pub fn setSize(self: Self, width: i16, height: i16) void {
+        pub fn setSize(self: Self, width: i32, height: i32) void {
             (Obj{ .obj = self.obj }).setSize(width, height);
         }
 
@@ -218,7 +218,7 @@ pub fn Functions(comptime Self: type) type {
         fn generateWrapper(comptime callbacks: type, comptime name: []const u8) fn (?*c.lv_event_t) callconv(.C) void {
             return struct {
                 fn f(e: ?*c.lv_event_t) callconv(.C) void {
-                    @field(callbacks, name)(Self{ .obj = e.?.target.? });
+                    @field(callbacks, name)(Self{ .obj = @ptrCast(e.?.current_target.?) });
                 }
             }.f;
         }

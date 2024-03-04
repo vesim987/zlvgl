@@ -110,14 +110,6 @@ e.g. "stm32f769xx.h" or "stm32f429xx.h"*/
  * Asserts
  *-----------*/
 
-/*Enable asserts if an operation is failed or an invalid data is found.
- *If LV_USE_LOG is enabled an error message will be printed on failure*/
-#define LV_USE_ASSERT_NULL          1   /*Check if the parameter is NULL. (Very fast, recommended)*/
-#define LV_USE_ASSERT_MALLOC        1   /*Checks is the memory is successfully allocated or no. (Very fast, recommended)*/
-#define LV_USE_ASSERT_STYLE         0   /*Check if the styles are properly initialized. (Very fast, recommended)*/
-#define LV_USE_ASSERT_MEM_INTEGRITY 0   /*Check the integrity of `lv_mem` after critical operations. (Slow)*/
-#define LV_USE_ASSERT_OBJ           0   /*Check the object's type and existence (e.g. not deleted). (Slow)*/
-
 /*Add a custom handler when assert happens e.g. to restart the MCU*/
 #define LV_ASSERT_HANDLER_INCLUDE   <stdint.h>
 #define LV_ASSERT_HANDLER   while(1);   /*Halt by default*/
@@ -127,11 +119,11 @@ e.g. "stm32f769xx.h" or "stm32f429xx.h"*/
  *-----------*/
 
 /*1: Show CPU usage and FPS count in the right bottom corner*/
-#define LV_USE_PERF_MONITOR     1
+#define LV_USE_PERF_MONITOR     0
 
 /*1: Show the used memory and the memory fragmentation  in the left bottom corner
  * Requires LV_MEM_CUSTOM = 0*/
-#define LV_USE_MEM_MONITOR      1
+#define LV_USE_MEM_MONITOR      0
 
 /*1: Draw random colored rectangles over the redrawn areas*/
 #define LV_USE_REFR_DEBUG       0
@@ -261,99 +253,25 @@ e.g. "stm32f769xx.h" or "stm32f429xx.h"*/
 #define LV_FONT_SUBPX_BGR       0  /*0: RGB; 1:BGR order*/
 #endif
 
-/*=================
- *  TEXT SETTINGS
- *=================*/
-
-/**
- * Select a character encoding for strings.
- * Your IDE or editor should have the same character encoding
- * - LV_TXT_ENC_UTF8
- * - LV_TXT_ENC_ASCII
- */
-#define LV_TXT_ENC LV_TXT_ENC_UTF8
-
- /*Can break (wrap) texts on these chars*/
-#define LV_TXT_BREAK_CHARS                  " ,.;:-_"
-
-/*If a word is at least this long, will break wherever "prettiest"
- *To disable, set to a value <= 0*/
-#define LV_TXT_LINE_BREAK_LONG_LEN          0
-
-/*Minimum number of characters in a long word to put on a line before a break.
- *Depends on LV_TXT_LINE_BREAK_LONG_LEN.*/
-#define LV_TXT_LINE_BREAK_LONG_PRE_MIN_LEN  3
-
-/*Minimum number of characters in a long word to put on a line after a break.
- *Depends on LV_TXT_LINE_BREAK_LONG_LEN.*/
-#define LV_TXT_LINE_BREAK_LONG_POST_MIN_LEN 3
-
-/*The control character to use for signalling text recoloring.*/
-#define LV_TXT_COLOR_CMD "#"
-
-/*Support bidirectional texts. Allows mixing Left-to-Right and Right-to-Left texts.
- *The direction will be processed according to the Unicode Bidirectioanl Algorithm:
- *https://www.w3.org/International/articles/inline-bidi-markup/uba-basics*/
-#define LV_USE_BIDI         0
-#if LV_USE_BIDI
-/*Set the default direction. Supported values:
- *`LV_BASE_DIR_LTR` Left-to-Right
- *`LV_BASE_DIR_RTL` Right-to-Left
- *`LV_BASE_DIR_AUTO` detect texts base direction*/
-#define LV_BIDI_BASE_DIR_DEF  LV_BASE_DIR_AUTO
-#endif
-
-/*Enable Arabic/Persian processing
- *In these languages characters should be replaced with an other form based on their position in the text*/
-#define LV_USE_ARABIC_PERSIAN_CHARS 0
-
 /*==================
  *  WIDGET USAGE
  *================*/
 
 /*Documentation of the widgets: https://docs.lvgl.io/latest/en/html/widgets/index.html*/
 
-#define LV_USE_ARC          1
 
-#define LV_USE_ANIMIMG      0
-
-#define LV_USE_BAR          1
-
-#define LV_USE_BTN          1
-
-#define LV_USE_BTNMATRIX    1
-
-#define LV_USE_CANVAS       0
-
-#define LV_USE_CHECKBOX     1
-
-#define LV_USE_DROPDOWN     1   /*Requires: lv_label*/
-
-#define LV_USE_IMG          1   /*Requires: lv_label*/
-
-#define LV_USE_LABEL        1
 #if LV_USE_LABEL
 #  define LV_LABEL_TEXT_SELECTION         1   /*Enable selecting text of the label*/
 #  define LV_LABEL_LONG_TXT_HINT    1   /*Store some extra info in labels to speed up drawing of very long texts*/
 #endif
 
-#define LV_USE_LINE         1
-
-#define LV_USE_ROLLER       0   /*Requires: lv_label*/
 #if LV_USE_ROLLER
 #  define LV_ROLLER_INF_PAGES       7   /*Number of extra "pages" when the roller is infinite*/
 #endif
 
-#define LV_USE_SLIDER       1   /*Requires: lv_bar*/
-
-#define LV_USE_SWITCH    1
-
-#define LV_USE_TEXTAREA    1    /*Requires: lv_label*/
 #if LV_USE_TEXTAREA != 0
 #  define LV_TEXTAREA_DEF_PWD_SHOW_TIME     1500    /*ms*/
 #endif
-
-#define LV_USE_TABLE  1
 
 /*==================
  * EXTRA COMPONENTS
@@ -362,7 +280,6 @@ e.g. "stm32f769xx.h" or "stm32f429xx.h"*/
 /*-----------
  * Widgets
  *----------*/
-#define LV_USE_CALENDAR     0
 #if LV_USE_CALENDAR
 # define LV_CALENDAR_WEEK_STARTS_MONDAY 0
 # if LV_CALENDAR_WEEK_STARTS_MONDAY
@@ -376,81 +293,13 @@ e.g. "stm32f769xx.h" or "stm32f429xx.h"*/
 # define LV_USE_CALENDAR_HEADER_DROPDOWN    1
 #endif  /*LV_USE_CALENDAR*/
 
-#define LV_USE_CHART        0
 
-#define LV_USE_COLORWHEEL   0
 
-#define LV_USE_IMGBTN       0
-
-#define LV_USE_KEYBOARD     0
-
-#define LV_USE_LED          0
-
-#define LV_USE_LIST         1
-
-#define LV_USE_METER        0
-#define LV_USE_MENU         1
-
-#define LV_USE_MSGBOX       1
-
-#define LV_USE_SPINBOX      0
-
-#define LV_USE_SPINNER      1
-
-#define LV_USE_TABVIEW      1
-
-#define LV_USE_TILEVIEW     0
-
-#define LV_USE_WIN          0
-
-#define LV_USE_SPAN         0
 #if LV_USE_SPAN
 /*A line text can contain maximum num of span descriptor */
 #  define LV_SPAN_SNIPPET_STACK_SIZE   64
 #endif
 
-/*-----------
- * Themes
- *----------*/
-
-/*A simple, impressive and very complete theme*/
-#define LV_USE_THEME_DEFAULT    1
-#if LV_USE_THEME_DEFAULT
-
-/*0: Light mode; 1: Dark mode*/
-# define LV_THEME_DEFAULT_DARK     1
-
-/*1: Enable grow on press*/
-# define LV_THEME_DEFAULT_GROW              1
-
-/*Default transition time in [ms]*/
-# define LV_THEME_DEFAULT_TRANSITON_TIME    80
-#endif /*LV_USE_THEME_DEFAULT*/
-
-/*An very simple them that is a good starting point for a custom theme*/
- #define LV_USE_THEME_BASIC    0
-
-/*A theme designed for monochrome displays*/
-#define LV_USE_THEME_MONO       1
-
-/*-----------
- * Layouts
- *----------*/
-
-/*A layout similar to Flexbox in CSS.*/
-#define LV_USE_FLEX     1
-
-/*A layout similar to Grid in CSS.*/
-#define LV_USE_GRID     0
-
-/*==================
-* EXAMPLES
-*==================*/
-
-/*Enable the examples to be built with the library*/
-#define LV_BUILD_EXAMPLES   1
-
-/*--END OF LV_CONF_H--*/
 
 #endif /*LV_CONF_H*/
 

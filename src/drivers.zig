@@ -66,8 +66,8 @@ pub const gtk = struct {
     pub fn register_display_driver() void {
         c.lv_disp_draw_buf_init(&disp_buf1, @as(*anyopaque, @ptrCast(&buf1)), null, buf1.len);
         c.lv_disp_drv_init(&disp_drv);
-        disp_drv.hor_res = 800;
-        disp_drv.ver_res = 480;
+        disp_drv.hor_res = config.width;
+        disp_drv.ver_res = config.height;
         disp_drv.draw_buf = &disp_buf1;
         disp_drv.flush_cb = c.gtkdrv_flush_cb;
         _ = c.lv_disp_drv_register(&disp_drv);
@@ -94,17 +94,17 @@ pub const sdl = struct {
         register_mouse_driver();
     }
 
-    var disp_drv: c.lv_disp_drv_t = undefined;
+    pub var disp_drv: c.lv_disp_drv_t = undefined;
     pub fn register_display_driver() void {
         switch (config.gpu) {
             .Sdl => {
-                c.sdl_disp_drv_init(&disp_drv, 800, 480);
+                c.sdl_disp_drv_init(&disp_drv, config.width, config.height);
             },
             .Software => {
                 c.lv_disp_draw_buf_init(&disp_buf1, @as(*anyopaque, @ptrCast(&buf1)), null, buf1.len);
                 c.lv_disp_drv_init(&disp_drv);
-                disp_drv.hor_res = 800;
-                disp_drv.ver_res = 480;
+                disp_drv.hor_res = config.width;
+                disp_drv.ver_res = config.height;
                 disp_drv.draw_buf = &disp_buf1;
                 disp_drv.flush_cb = c.sdl_display_flush;
             },

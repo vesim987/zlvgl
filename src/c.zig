@@ -24,9 +24,9 @@ pub const c = @cImport({
     @cDefine("SDL_INCLUDE_PATH", "<SDL2/SDL.h>");
     @cDefine("ZIG", "1");
     @cInclude("lvgl.h");
-    @cInclude("gtkdrv/gtkdrv.h");
-    @cInclude("display/fbdev.h");
-    @cInclude("indev/evdev.h");
-    @cInclude("sdl/sdl.h");
-    @cInclude("sdl/sdl_gpu.h");
+    // @cInclude("gtkdrv/gtkdrv.h");
+    // @cInclude("display/fbdev.h");
+    // @cInclude("indev/evdev.h");
+    // @cInclude("sdl/sdl.h");
+    // @cInclude("sdl/sdl_gpu.h");
 });
