@@ -16,7 +16,7 @@ pub const CellCtrl = enum(u8) {
     _,
 };
 
-pub fn init(parent: anytype) Table {
+pub fn create(parent: anytype) Table {
     return .{ .obj = c.lv_table_create(parent.obj).? };
 }
 

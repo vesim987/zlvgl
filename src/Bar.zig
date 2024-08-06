@@ -13,7 +13,7 @@ pub const Mode = enum(u8) {
     _,
 };
 
-pub fn init(parent: anytype) Bar {
+pub fn create(parent: anytype) Bar {
     return Bar{ .obj = c.lv_bar_create(parent.obj).? };
 }
 

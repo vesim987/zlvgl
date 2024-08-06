@@ -6,7 +6,7 @@ obj: *c.lv_obj_t,
 
 pub usingnamespace lv.Obj.Functions(Dropdown);
 
-pub fn init(parent: anytype) Dropdown {
+pub fn create(parent: anytype) Dropdown {
     return Dropdown{ .obj = c.lv_dropdown_create(parent.obj).? };
 }
 

@@ -19,6 +19,7 @@ pub const c = @cImport({
         .FbDev => {
             @cDefine("USE_FBDEV", "1");
         },
+        .None => {},
     }
     @cDefine("LV_LVGL_H_INCLUDE_SIMPLE", "1");
     @cDefine("SDL_INCLUDE_PATH", "<SDL2/SDL.h>");

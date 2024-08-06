@@ -28,7 +28,7 @@ pub fn assign(o: *c.lv_obj_t) Obj {
     };
 }
 
-pub fn init(parent: anytype) Obj {
+pub fn create(parent: anytype) Obj {
     return .{
         .obj = c.lv_obj_create(parent.obj).?,
     };

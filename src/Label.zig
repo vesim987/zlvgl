@@ -15,7 +15,7 @@ pub const LongMode = enum(u8) {
     _,
 };
 
-pub fn init(parent: anytype) Label {
+pub fn create(parent: anytype) Label {
     return .{ .obj = c.lv_label_create(parent.obj).? };
 }
 

@@ -6,7 +6,7 @@ obj: *c.lv_obj_t,
 
 pub usingnamespace lv.Obj.Functions(List);
 
-pub fn init(parent: anytype) List {
+pub fn create(parent: anytype) List {
     return .{
         .obj = c.lv_list_create(parent.obj).?,
     };

@@ -1,15 +1,17 @@
 const std = @import("std");
 
-const Driver = enum { Gtk, FbDev, Sdl };
+const Driver = enum { Gtk, FbDev, Sdl, None };
 
 // TODO: add more "GPUs"
 const Gpu = enum { Auto, Software, Sdl };
 
 pub const Config = struct {
-    driver: Driver = .Sdl,
+    driver: Driver = .None,
+    gpu: Gpu = .Auto,
+
+    // TODO: remove this
     width: u32 = 800,
     height: u32 = 480,
-    gpu: Gpu = .Auto,
 
     lvgl: struct {
         color: struct {
@@ -72,7 +74,7 @@ pub const Config = struct {
                 None,
             } = .Warn,
             /// true: Print the log with 'printf';
-            /// false : User need to register a callback with `lv_log_register_print_cb()`
+            /// false: User need to register a callback with `lv_log_register_print_cb()`
             use_printf: bool = true,
             /// Enable/disable LV_LOG_TRACE in modules that produces a huge number of logs
             trace: struct {
@@ -165,7 +167,7 @@ pub const Config = struct {
                 tileview: bool = false,
                 tabview: bool = false,
                 colorwheel: bool = false,
-                imgbtn: bool = false,
+                image: bool = false,
                 span: bool = false,
                 led: bool = false,
             } = .{},
@@ -198,7 +200,6 @@ pub fn build(b: *std.Build) !void {
     const config_addr = b.option(usize, "config_addr", "only for direct use as dependency") orelse 0;
     const config: ?*Config = if (config_addr == 0) null else @as(*Config, @ptrFromInt(config_addr));
 
-    const lv_drivers_dep = b.dependency("lv_drivers", .{});
     const lvgl_dep = b.dependency("lvgl", .{});
 
     const lvgl = b.addStaticLibrary(.{
@@ -209,48 +210,56 @@ pub fn build(b: *std.Build) !void {
     });
 
     const zlvgl = b.addModule("zlvgl", .{
-        .root_source_file = .{ .path = "src/lv.zig" },
+        .root_source_file = b.path("src/lv.zig"),
     });
 
-    const build_mod = b.addModule("build", .{ .root_source_file = .{ .path = "build.zig" } });
+    const build_mod = b.addModule("build", .{ .root_source_file = b.path("build.zig") });
     zlvgl.addImport("build", build_mod);
 
     try addFiles(b, lvgl, .{
         .zlvgl = zlvgl,
         .lvgl = lvgl_dep,
-        .lv_drivers = lv_drivers_dep,
     }, if (config) |c| c else &Config{
         .driver = driver,
         .gpu = gpu,
+        .lvgl = .{
+            .widgets = .{
+                .button = true,
+                .label = true,
+            },
+        },
     });
     b.installArtifact(lvgl);
     zlvgl.linkLibrary(lvgl);
     try zlvgl.include_dirs.appendSlice(b.allocator, lvgl.root_module.include_dirs.items);
+
+    // {
+    //     const autodoc_test = b.addTest(.{
+    //         .root_source_file = b.path("src/test.zig"),
+    //         .target = target,
+    //     });
+    //     autodoc_test.root_module.addImport("zlvgl", zlvgl);
+
+    //     const install_docs = b.addInstallDirectory(.{
+    //         .source_dir = autodoc_test.getEmittedDocs(),
+    //         .install_dir = .prefix,
+    //         .install_subdir = "doc",
+    //     });
+
+    //     b.getInstallStep().dependOn(&install_docs.step);
+    // }
 }
 
 fn addFiles(b: *std.Build, lib: *std.Build.Step.Compile, modules: struct {
     zlvgl: *std.Build.Module,
     lvgl: *std.Build.Dependency,
-    lv_drivers: *std.Build.Dependency,
 }, config: *const Config) !void {
     const lvgl = modules.lvgl;
 
-    lib.addIncludePath(.{ .path = "./foundation-libc/include/" });
+    lib.addIncludePath(b.path("zig_exports"));
 
-    lib.addIncludePath(.{ .path = b.pathFromRoot("configs") });
-    lib.installHeadersDirectoryOptions(.{
-        .source_dir = .{ .path = b.pathFromRoot("configs") },
-        .install_dir = .header,
-        .install_subdir = "",
-    });
     lib.addIncludePath(lvgl.path(""));
-    lib.installHeadersDirectoryOptions(.{
-        .source_dir = lvgl.path(""),
-        .install_dir = .header,
-        .install_subdir = "",
-        .include_extensions = &.{".h"},
-    });
-    // lib.addIncludePath(lv_drivers.path(""));
+    lib.installHeadersDirectory(lvgl.path(""), "", .{ .include_extensions = &.{".h"} });
 
     const options = b.addOptions();
     lib.step.dependOn(&options.step);
@@ -263,7 +272,7 @@ fn addFiles(b: *std.Build, lib: *std.Build.Step.Compile, modules: struct {
     options.addOption([]const u8, "config", list.items);
 
     const config_header = b.addConfigHeader(.{
-        .include_path = "lv_conf_zig.h",
+        .include_path = "lv_conf.h",
     }, .{
         .LV_COLOR_DEPTH = @as(i64, @intFromEnum(config.lvgl.color.depth)),
         .LV_COLOR_16_SWAP = config.lvgl.color.swap_rgb565,
@@ -274,6 +283,9 @@ fn addFiles(b: *std.Build, lib: *std.Build.Step.Compile, modules: struct {
         .LV_DISP_DEF_REFR_PERIOD = config.lvgl.hal.display_refresh_period, // ms
         .LV_INDEV_DEF_READ_PERIOD = config.lvgl.hal.indev_refresh_period, //ms
         .LV_DPI_DEF = config.lvgl.hal.dpi,
+
+        .LV_ASSERT_HANDLER_INCLUDE = "zig.h",
+        .LV_ASSERT_HANDLER = .@"zig_lvgl_assert();",
     });
 
     switch (config.lvgl.memory.allocator) {
@@ -398,6 +410,7 @@ fn addFiles(b: *std.Build, lib: *std.Build.Step.Compile, modules: struct {
             .Sdl => "-DUSE_SDL_GPU=1",
             else => unreachable,
         },
+        .None => "",
     };
     const cflags = [_][]const u8{
         // TODO: rewrite drivers and get rid of hardcoded resolutions
@@ -445,6 +458,7 @@ fn addFiles(b: *std.Build, lib: *std.Build.Step.Compile, modules: struct {
                 },
             }
         },
+        .None => {},
     }
 
     // TODO
@@ -556,7 +570,7 @@ fn addFiles(b: *std.Build, lib: *std.Build.Step.Compile, modules: struct {
         lvgl.path("src/draw/lv_draw_line.c"),
         lvgl.path("src/draw/lv_draw_image.c"),
 
-        lvgl.path("src/draw/lv_image_buf.c"),
+        // lvgl.path("src/draw/lv_image_buf.c"),
         lvgl.path("src/draw/lv_image_decoder.c"),
         // lvgl.path("src/draw/lv_img_cache.c"),
 
@@ -585,6 +599,7 @@ fn addFiles(b: *std.Build, lib: *std.Build.Step.Compile, modules: struct {
         lvgl.path("src/misc/lv_rb.c"),
         lvgl.path("src/misc/cache/lv_cache.c"),
         lvgl.path("src/misc/cache/lv_cache_entry.c"),
+        lvgl.path("src/misc/cache/lv_image_cache.c"),
         lvgl.path("src/misc/cache/_lv_cache_lru_rb.c"),
 
         // extra
@@ -699,6 +714,7 @@ fn addFiles(b: *std.Build, lib: *std.Build.Step.Compile, modules: struct {
     if (config.lvgl.widgets.slider and !config.lvgl.widgets.bar) {
         @panic("Slider requires Bar");
     }
+
     inline for (&.{
         "animimg",
         "arc",
@@ -841,9 +857,9 @@ fn addFiles(b: *std.Build, lib: *std.Build.Step.Compile, modules: struct {
     }
 
     config_header.addValues(.{
-        .LV_USE_IMGBTN = config.lvgl.widgets.extra.imgbtn,
+        .LV_USE_IMAGE = config.lvgl.widgets.extra.image,
     });
-    if (config.lvgl.widgets.extra.imgbtn) {
+    if (config.lvgl.widgets.extra.image) {
         try files.append(lvgl.path("src/extra/widgets/imgbtn/lv_imgbtn.c"));
     }
 
@@ -894,5 +910,5 @@ fn addFiles(b: *std.Build, lib: *std.Build.Step.Compile, modules: struct {
     }
 
     lib.addConfigHeader(config_header);
-    lib.installConfigHeader(config_header, .{});
+    lib.installConfigHeader(config_header);
 }

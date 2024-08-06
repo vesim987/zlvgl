@@ -19,7 +19,7 @@ pub const DrawPart = enum(u8) {
     Knob = c.LV_ARC_DRAW_PART_KNOB,
 };
 
-pub fn init(parent: anytype) Arc {
+pub fn create(parent: anytype) Arc {
     return Arc{ .obj = c.lv_arc_create(parent.obj).? };
 }
 

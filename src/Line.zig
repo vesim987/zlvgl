@@ -6,7 +6,7 @@ obj: *c.lv_obj_t,
 
 pub usingnamespace lv.Obj.Functions(Line);
 
-pub fn init(parent: anytype) Line {
+pub fn create(parent: anytype) Line {
     return .{ .obj = c.lv_line_create(parent.obj).? };
 }
 

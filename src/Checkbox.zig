@@ -6,7 +6,7 @@ obj: *c.lv_obj_t,
 
 pub usingnamespace lv.Obj.Functions(Checkbox);
 
-pub fn init(parent: anytype) Checkbox {
+pub fn create(parent: anytype) Checkbox {
     return Checkbox{ .obj = c.lv_checkbox_create(parent.obj).? };
 }
 

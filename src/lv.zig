@@ -74,15 +74,33 @@ pub const Anim = @import("Anim.zig");
 
 pub const Flex = @import("Flex.zig");
 
-pub const drivers = @import("drivers.zig");
-
 pub const task = struct {
     pub fn handler() void {
         _ = c.lv_task_handler();
     }
 };
 
+fn print_cb(log_level: c.lv_log_level_t, msg_: [*c]const u8) callconv(.C) void {
+    const msg_span = std.mem.span(msg_);
+    const msg = std.mem.trimRight(u8, msg_span, "\r\n");
+
+    const logger = std.log.scoped(.lvgl);
+
+    switch (log_level) {
+        c.LV_LOG_LEVEL_INFO,
+        c.LV_LOG_LEVEL_USER,
+        => logger.info("{s}", .{msg}),
+        c.LV_LOG_LEVEL_WARN => logger.warn("{s}", .{msg}),
+        c.LV_LOG_LEVEL_ERROR => logger.err("{s}", .{msg}),
+        c.LV_LOG_LEVEL_TRACE,
+        c.LV_LOG_LEVEL_NONE,
+        => logger.debug("{s}", .{msg}),
+        else => logger.debug("{s}", .{msg}),
+    }
+}
+
 pub fn init() void {
+    c.lv_log_register_print_cb(print_cb);
     c.lv_init();
 }
 
@@ -108,8 +126,17 @@ pub const Size = struct {
     pub const Content = c.LV_SIZE_CONTENT;
 };
 
+export fn zig_lvgl_assert() void {
+    @panic("lvgl assert");
+}
+
+test {
+    _ = Button;
+    _ = Label;
+}
+
 comptime {
-    std.testing.refAllDeclsRecursive(@This());
+    // std.testing.refAllDeclsRecursive(@This());
 
     // inline for (std.meta.declarations(@This())) |decl| {
     //     if (std.mem.eql(u8, decl.name, "c"))
@@ -122,20 +149,4 @@ comptime {
     //         _ = d;
     //     }
     // }
-}
-
-export fn strlen(s: [*c]const u8) c_int {
-    _ = s;
-    return 0;
-}
-
-export fn strcpy(dest: [*c]u8, src: [*c]const u8) [*c]u8 {
-    _ = src;
-    return dest;
-}
-
-export fn strcmp(a: [*c]u8, b: [*c]const u8) c_int {
-    _ = a;
-    _ = b;
-    return 0;
 }

@@ -6,7 +6,7 @@ obj: *c.lv_obj_t,
 
 pub usingnamespace lv.Obj.Functions(Slider);
 
-pub fn init(parent: anytype) Slider {
+pub fn create(parent: anytype) Slider {
     return .{
         .obj = c.lv_slider_create(parent.obj).?,
     };

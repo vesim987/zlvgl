@@ -6,7 +6,7 @@ obj: *c.lv_obj_t,
 
 pub usingnamespace lv.Obj.Functions(TabView);
 
-pub fn init(parent: anytype) TabView {
+pub fn create(parent: anytype) TabView {
     return .{
         .obj = c.lv_tabview_create(parent.obj).?,
     };

@@ -3,15 +3,10 @@
     .version = "9.0.0",
     .paths = .{""},
     .dependencies = .{
-        .lv_drivers = .{
-            .path = "../lv_drivers",
-            // .url = "https://github.com/vesim987/lv_drivers/archive/9eb45c2b521d3a128e4af94a4d394bb79d56cae0.tar.gz",
-            // .hash = "1220f531818a8e82e5b372137a30db880b755a5554977c1273ca33da7c6dc8d8a551",
-        },
         .lvgl = .{
-            .path = "../lvgl",
-            // .url = "https://github.com/vesim987/lvgl/archive/v9.0.0.tar.gz",
-            // .hash = "122081f01b18062fa2866a0caaa0f59008e258df879b4328f9b2967b9b2ac1f00245",
+            // .path = "../lvgl",
+            .url = "https://github.com/vesim987/lvgl/archive/v9.1.0-zig.tar.gz",
+            .hash = "122017656873c0f2a319f84155d65bf263c374655d159f86cda5292c6bbf0e96999d",
         },
     },
 }
