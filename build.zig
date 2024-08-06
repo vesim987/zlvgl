@@ -9,10 +9,6 @@ pub const Config = struct {
     driver: Driver = .None,
     gpu: Gpu = .Auto,
 
-    // TODO: remove this
-    width: u32 = 800,
-    height: u32 = 480,
-
     lvgl: struct {
         color: struct {
             depth: enum(i64) {
@@ -196,9 +192,25 @@ pub fn build(b: *std.Build) !void {
     const optimize = b.standardOptimizeOption(.{});
 
     const driver = b.option(Driver, "driver", "Driver") orelse .Sdl;
-    const gpu = b.option(Gpu, "gpu", "gpu") orelse .Auto;
+    const gpu = b.option(Gpu, "gpu", "gpu") orelse .Sdl;
     const config_addr = b.option(usize, "config_addr", "only for direct use as dependency") orelse 0;
-    const config: ?*Config = if (config_addr == 0) null else @as(*Config, @ptrFromInt(config_addr));
+    const config: *const Config = if (config_addr == 0) &Config{
+        .gpu = gpu,
+        .driver = driver,
+        .lvgl = .{
+            .widgets = .{
+                .button = true,
+                .buttonmatrix = true,
+                .label = true,
+                .extra = .{
+                    .tabview = true,
+                },
+            },
+            .layouts = .{
+                .flex = true,
+            },
+        },
+    } else @as(*Config, @ptrFromInt(config_addr));
 
     const lvgl_dep = b.dependency("lvgl", .{});
 
@@ -414,12 +426,6 @@ fn addFiles(b: *std.Build, lib: *std.Build.Step.Compile, modules: struct {
     };
     const cflags = [_][]const u8{
         // TODO: rewrite drivers and get rid of hardcoded resolutions
-        b.fmt("-DSDL_HOR_RES={}", .{config.width}),
-        b.fmt("-DSDL_VER_RES={}", .{config.height}),
-        b.fmt("-DLV_HOR_RES={}", .{config.width}),
-        b.fmt("-DLV_VER_RES={}", .{config.height}),
-        b.fmt("-DLV_HOR_RES_MAX={}", .{config.width}),
-        b.fmt("-DLV_VER_RES_MAX={}", .{config.height}),
         "-DLV_USE_OS=LV_OS_PTHREAD", // TODO
 
         "-DLV_LVGL_H_INCLUDE_SIMPLE=1",
