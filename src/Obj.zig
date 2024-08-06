@@ -140,6 +140,23 @@ pub const StyleSelector = enum(u32) {
     Any = c.LV_PART_ANY,
     _,
 };
+
+pub const StateSelector = enum(u32) {
+    Default = c.LV_STATE_DEFAULT,
+    Checked = c.LV_STATE_CHECKED,
+    Focused = c.LV_STATE_FOCUSED,
+    FocusKey = c.LV_STATE_FOCUS_KEY,
+    Edited = c.LV_STATE_EDITED,
+    Hovered = c.LV_STATE_HOVERED,
+    Pressed = c.LV_STATE_PRESSED,
+    Scrolled = c.LV_STATE_SCROLLED,
+    Disabled = c.LV_STATE_DISABLED,
+    User1 = c.LV_STATE_USER_1,
+    User2 = c.LV_STATE_USER_2,
+    User3 = c.LV_STATE_USER_3,
+    User4 = c.LV_STATE_USER_4,
+    Any = c.LV_STATE_ANY,
+};
 pub fn removeStyle(self: Obj, style: ?*anyopaque, selector: StyleSelector) void {
     _ = style;
     c.lv_obj_remove_style(self.obj, null, @intFromEnum(selector));
@@ -157,6 +174,10 @@ pub const BaseDir = enum(u8) {
 
 pub fn setStyleBaseDir(self: Obj, value: BaseDir, selector: StyleSelector) void {
     c.lv_obj_set_style_base_dir(self.obj, @intFromEnum(value), @intFromEnum(selector));
+}
+
+pub fn setStylePadAll(self: Obj, value: i32, selector: StateSelector) void {
+    c.lv_obj_set_style_pad_all(self.obj, value, @intFromEnum(selector));
 }
 
 // state
