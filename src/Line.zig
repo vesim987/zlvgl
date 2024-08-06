@@ -1,5 +1,10 @@
+const std = @import("std");
 const lv = @import("lv.zig");
 const c = lv.c;
+
+comptime {
+    std.debug.assert(lv.config.lvgl.widgets.line);
+}
 
 pub const Line = @This();
 obj: *c.lv_obj_t,

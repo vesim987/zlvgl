@@ -50,25 +50,25 @@ pub const Obj = @import("Obj.zig");
 const widgets_config = config.lvgl.widgets;
 
 // core widgets
-pub const Arc = if (widgets_config.arc) @import("Arc.zig") else @compileError("Arc support is disabled in the config");
-pub const Bar = if (widgets_config.bar) @import("Bar.zig") else @compileError("Bar support is disabled in the config");
-pub const Button = if (widgets_config.button) @import("Button.zig") else @compileError("Button support is disabled in the config");
+pub const Arc = @import("Arc.zig");
+pub const Bar = @import("Bar.zig");
+pub const Button = @import("Button.zig");
 // pub const ButtonMatrix = @import("ButtonMatrix.zig");
 // pub const Canvas = @import("Canvas.zig");
-pub const Checkbox = if (widgets_config.checkbox) @import("Checkbox.zig") else @compileError("Checkbox support is disabled in the config");
-pub const Dropdown = if (widgets_config.dropdown) @import("Dropdown.zig") else @compileError("Dropdown support is disabled in the config");
+pub const Checkbox = @import("Checkbox.zig");
+pub const Dropdown = @import("Dropdown.zig");
 // pub const Img = @import("Img.zig");
-pub const Label = if (widgets_config.label) @import("Label.zig") else @compileError("Label support is disabled in the config");
-pub const Line = if (widgets_config.line) @import("Line.zig") else @compileError("Line support is disabled in the config");
+pub const Label = @import("Label.zig");
+pub const Line = @import("Line.zig");
 // pub const Roller = @import("Roller.zig");
-pub const Slider = if (widgets_config.slider) @import("Slider.zig") else @compileError("Slider support is disabled in the config");
-pub const Switch = if (widgets_config.@"switch") @import("Switch.zig") else @compileError("Switch support is disabled in the config");
-pub const Table = if (widgets_config.table) @import("Table.zig") else @compileError("Table support is disabled in the config");
+pub const Slider = @import("Slider.zig");
+pub const Switch = @import("Switch.zig");
+pub const Table = @import("Table.zig");
 // pub const Textarea = @import("Textarea.zig");
 
 // extra widgets
-pub const List = if (widgets_config.extra.list) @import("List.zig") else @compileError("List support is disabled in the config");
-pub const TabView = if (widgets_config.extra.tabview) @import("TabView.zig") else @compileError("TabView support is disabled in the config");
+pub const List = @import("List.zig");
+pub const TabView = @import("TabView.zig");
 
 pub const Anim = @import("Anim.zig");
 

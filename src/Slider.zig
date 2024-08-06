@@ -1,5 +1,10 @@
+const std = @import("std");
 const lv = @import("lv.zig");
 const c = lv.c;
+
+comptime {
+    std.debug.assert(lv.config.lvgl.widgets.slider);
+}
 
 pub const Slider = @This();
 obj: *c.lv_obj_t,

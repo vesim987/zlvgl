@@ -1,5 +1,10 @@
+const std = @import("std");
 const lv = @import("lv.zig");
 const c = lv.c;
+
+comptime {
+    std.debug.assert(lv.config.lvgl.widgets.button);
+}
 
 pub const Button = @This();
 obj: *c.lv_obj_t,
@@ -11,7 +16,6 @@ pub fn create(parent: anytype) Button {
 }
 
 test Button {
-    const std = @import("std");
     const btn1 = lv.Button.create(lv.Screen.active());
     btn1.addEventCallback(struct {
         pub fn onClicked(target: lv.Button) void {
