@@ -129,24 +129,3 @@ pub const Size = struct {
 export fn zig_lvgl_assert() void {
     @panic("lvgl assert");
 }
-
-test {
-    _ = Button;
-    _ = Label;
-}
-
-comptime {
-    // std.testing.refAllDeclsRecursive(@This());
-
-    // inline for (std.meta.declarations(@This())) |decl| {
-    //     if (std.mem.eql(u8, decl.name, "c"))
-    //         continue;
-    //     if (std.mem.eql(u8, decl.name, "Coord"))
-    //         continue;
-    //     if(@TypeOf(@field(@This(), )))
-
-    //     inline for (std.meta.declarations(@field(@This(), decl.name))) |d| {
-    //         _ = d;
-    //     }
-    // }
-}
