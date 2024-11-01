@@ -220,50 +220,70 @@ pub fn build(b: *std.Build) !void {
         .optimize = optimize,
         .link_libc = true,
     });
+    try addFiles(b, lvgl, .{ .lvgl = lvgl_dep }, config);
+
+    const options = b.addOptions();
+
+    options.addOption(Driver, "driver", config.driver);
+    options.addOption(Gpu, "gpu", config.gpu);
+
+    var list = std.ArrayList(u8).init(b.allocator);
+    try std.json.stringify(config.*, .{}, list.writer());
+    options.addOption([]const u8, "config", list.items);
 
     const zlvgl = b.addModule("zlvgl", .{
         .root_source_file = b.path("src/lv.zig"),
     });
+    zlvgl.addImport("config", options.createModule());
 
     const build_mod = b.addModule("build", .{ .root_source_file = b.path("build.zig") });
     zlvgl.addImport("build", build_mod);
 
-    try addFiles(b, lvgl, .{
-        .zlvgl = zlvgl,
-        .lvgl = lvgl_dep,
-    }, if (config) |c| c else &Config{
-        .driver = driver,
-        .gpu = gpu,
-        .lvgl = .{
-            .widgets = .{
-                .button = true,
-                .label = true,
-            },
-        },
-    });
     b.installArtifact(lvgl);
     zlvgl.linkLibrary(lvgl);
     try zlvgl.include_dirs.appendSlice(b.allocator, lvgl.root_module.include_dirs.items);
 
-    // {
-    //     const autodoc_test = b.addTest(.{
-    //         .root_source_file = b.path("src/test.zig"),
-    //         .target = target,
-    //     });
-    //     autodoc_test.root_module.addImport("zlvgl", zlvgl);
+    {
+        const examples = b.addTest(.{
+            .root_source_file = b.path("src/dummy.zig"),
+            .target = target,
+            .test_runner = b.path("src/examples_runner.zig"),
+        });
 
-    //     const install_docs = b.addInstallDirectory(.{
-    //         .source_dir = autodoc_test.getEmittedDocs(),
-    //         .install_dir = .prefix,
-    //         .install_subdir = "doc",
-    //     });
+        examples.root_module.addImport("build", build_mod);
+        examples.root_module.addImport("config", options.createModule());
+        try examples.root_module.include_dirs.appendSlice(b.allocator, lvgl.root_module.include_dirs.items);
+        examples.linkLibrary(lvgl);
 
-    //     b.getInstallStep().dependOn(&install_docs.step);
-    // }
+        const examples_run = b.addRunArtifact(examples);
+
+        const examples_step = b.step("examples", "Run examples");
+        examples_step.dependOn(&examples_run.step);
+    }
+
+    {
+        const autodoc_test = b.addTest(.{
+            .root_source_file = b.path("src/lv.zig"),
+            .target = target,
+        });
+        autodoc_test.root_module.addImport("build", build_mod);
+        autodoc_test.root_module.addImport("config", options.createModule());
+        try autodoc_test.root_module.include_dirs.appendSlice(b.allocator, lvgl.root_module.include_dirs.items);
+        autodoc_test.linkLibrary(lvgl);
+
+        const install_docs = b.addInstallDirectory(.{
+            .source_dir = autodoc_test.getEmittedDocs(),
+            .install_dir = .prefix,
+            .install_subdir = "doc",
+        });
+
+        const docs_step = b.step("docs", "Generate autodocs");
+
+        docs_step.dependOn(&install_docs.step);
+    }
 }
 
 fn addFiles(b: *std.Build, lib: *std.Build.Step.Compile, modules: struct {
-    zlvgl: *std.Build.Module,
     lvgl: *std.Build.Dependency,
 }, config: *const Config) !void {
     const lvgl = modules.lvgl;
@@ -272,16 +292,6 @@ fn addFiles(b: *std.Build, lib: *std.Build.Step.Compile, modules: struct {
 
     lib.addIncludePath(lvgl.path(""));
     lib.installHeadersDirectory(lvgl.path(""), "", .{ .include_extensions = &.{".h"} });
-
-    const options = b.addOptions();
-    lib.step.dependOn(&options.step);
-
-    modules.zlvgl.addImport("config", options.createModule());
-    options.addOption(Driver, "driver", config.driver);
-
-    var list = std.ArrayList(u8).init(b.allocator);
-    try std.json.stringify(config.*, .{}, list.writer());
-    options.addOption([]const u8, "config", list.items);
 
     const config_header = b.addConfigHeader(.{
         .include_path = "lv_conf.h",
@@ -412,7 +422,6 @@ fn addFiles(b: *std.Build, lib: *std.Build.Step.Compile, modules: struct {
         },
         else => |g| g,
     };
-    options.addOption(Gpu, "gpu", gpu);
 
     const driver_define: []const u8 = switch (config.driver) {
         .Gtk => "-DUSE_GTK=1",

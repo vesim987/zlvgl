@@ -2,8 +2,7 @@
   description = "KlipperZscreen";
 
   inputs = {
-    nixpkgs.url =
-      "git+file:///home/vesim/pro/nixpkgs"; # "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url =  "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     zig.url = "github:mitchellh/zig-overlay";
   };
