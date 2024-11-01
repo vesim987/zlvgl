@@ -220,7 +220,7 @@ pub fn build(b: *std.Build) !void {
         .optimize = optimize,
         .link_libc = true,
     });
-    try addFiles(b, lvgl, .{ .lvgl = lvgl_dep }, config);
+    try addFiles(b, lvgl, lvgl_dep, config);
 
     const options = b.addOptions();
 
@@ -283,11 +283,12 @@ pub fn build(b: *std.Build) !void {
     }
 }
 
-fn addFiles(b: *std.Build, lib: *std.Build.Step.Compile, modules: struct {
+fn addFiles(
+    b: *std.Build,
+    lib: *std.Build.Step.Compile,
     lvgl: *std.Build.Dependency,
-}, config: *const Config) !void {
-    const lvgl = modules.lvgl;
-
+    config: *const Config,
+) !void {
     lib.addIncludePath(b.path("zig_exports"));
 
     lib.addIncludePath(lvgl.path(""));
@@ -435,7 +436,10 @@ fn addFiles(b: *std.Build, lib: *std.Build.Step.Compile, modules: struct {
     };
     const cflags = [_][]const u8{
         // TODO: rewrite drivers and get rid of hardcoded resolutions
-        "-DLV_USE_OS=LV_OS_PTHREAD", // TODO
+        if (lib.rootModuleTarget().os.tag == .windows)
+            "-DLV_USE_OS=LV_OS_WINDOWS"
+        else
+            "-DLV_USE_OS=LV_OS_PTHREAD",
 
         "-DLV_LVGL_H_INCLUDE_SIMPLE=1",
         "-DLV_CONF_INCLUDE_SIMPLE=1",
@@ -630,13 +634,15 @@ fn addFiles(b: *std.Build, lib: *std.Build.Step.Compile, modules: struct {
         //libs
         lvgl.path("src/libs/bin_decoder/lv_bin_decoder.c"),
 
-        //TODO: make this configurable
-        lvgl.path("src/osal/lv_pthread.c"),
-
         // font
         lvgl.path("src/font/lv_font.c"),
         lvgl.path("src/font/lv_font_fmt_txt.c"),
         lvgl.path("src/font/lv_font_montserrat_14.c"),
+    });
+
+    try files.append(switch (lib.rootModuleTarget().os.tag) {
+        .windows => lvgl.path("src/osal/lv_windows.c"),
+        else => lvgl.path("src/osal/lv_pthread.c"),
     });
 
     switch (config.lvgl.text.encoding) {
